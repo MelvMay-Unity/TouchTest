@@ -1,25 +1,25 @@
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class HandleInput : MonoBehaviour
 {
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        var camera = Camera.main;
+        EnhancedTouchSupport.Enable();
 
-        foreach (var touch in Input.touches)
+        Touch.onFingerDown += OnFingerDown;
+    }
+
+    void OnFingerDown(Finger finger)
+    {
+        var position = Camera.main.ScreenToWorldPoint(finger.screenPosition);
+       
+        var collider = Physics2D.OverlapPoint(position);
+
+        if (collider)
         {
-            if (touch.phase == TouchPhase.Began)
-            {
-                var sceneTouchPosition = camera.ScreenToWorldPoint(touch.position);
-
-                var collider = Physics2D.OverlapPoint(sceneTouchPosition);
-
-                if (collider)
-                {
-                    Destroy(collider.gameObject);
-                }
-            }
+            Destroy(collider.gameObject);
         }
     }
 }
